@@ -228,15 +228,33 @@ addClickListenersToTags();
 
 function generateAuthors() {
 
+  /* find all articles */
+
   const articles = document.querySelectorAll(optArticleSelector);
+
+  /* START LOOP: for every article: */
 
   for (let article of articles) {
 
+    /* find authors wrapper */
+
     const titleAuthor = article.querySelector(optArticleAuthorSelector);
 
-    const articleAuthor = article.getAttribute('data-author');
+    /* gets author from data-author attribute */
 
-    titleAuthor.innerHTML = articleAuthor;
+    const articleAuthor = article.getAttribute('data-author');
+    console.log(articleAuthor);
+
+    /* create the author link */
+    const authorLink = document.createElement('a');
+    authorLink.setAttribute('href', `#author-${articleAuthor}`);
+    authorLink.textContent = articleAuthor;
+
+    /* insert the author link into author wrapper */
+    titleAuthor.innerHTML = ''; // Remove any existing content in the titleAuthor element
+    titleAuthor.appendChild(authorLink);
+
+    /*END LOOP: for every article: */
   }
 }
 generateAuthors();
