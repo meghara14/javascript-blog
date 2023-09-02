@@ -47,7 +47,10 @@ const optArticleSelector = '.post',
   optTitleSelector = '.post-title',
   optTitleListSelector = '.titles',
   optArticleTagsSelector = '.post-tags .list',
-  optArticleAuthorSelector = '.post-author';
+  optCloudClassCount = 5,
+  optCloudClassPrefix = 'tag-size-',
+  optArticleAuthorSelector = '.post-author',
+  optTagsListSelector = '.tags.list';
 
 function generateTitleLinks(customSelector = '') {
 
@@ -100,11 +103,55 @@ function tagArticleLink(data) {
   return `<a href="#tag-${data.id}">${data.title}</a>`;
 }
 
-function generateTags(customSelector) {
+function calculateTagsParams(tags) {
+  const params = { max: 0, min: 999999 };
+
+  for (let tag in tags) {
+    console.log(tag + ' is used ' + tags[tag] + ' times');
+
+    if (tags[tag] > params.max) {
+      params.max = tags[tag];
+    }
+
+    if (tags[tag] < params.min) {
+      params.min = tags[tag];
+    }
+
+  }
+
+  return params;
+}
+
+function calculateTagClass(count, params) {
+  const normalizedCount = count - params.min;
+  const normalizedMax = params.max - params.min;
+  const percentage = normalizedCount / normalizedMax;
+  const classNumber = Math.floor(percentage * (optCloudClassCount - 1) + 1);
+
+  return optCloudClassPrefix + classNumber;
+}
+
+function tagCloudLink(data) {
+  const min = 1;
+  const max = Math.max(...data.tags.map(tag => tag.count));
+  const step = (max - min) / optCloudClassCount;
+
+  const tagHTML = data.tags.map(tagData => {
+    return `<li><a class="${tagData.className}" href="#tag-${tagData.tag}">${tagData.tag} (${tagData.count})</a></li>`;
+  });
+
+  return tagHTML.join(' ');
+}
+
+function generateTags() {
+
+  /* [NEW] create a new variable allTags with an empty object */
+
+  let allTags = {};
 
   /* find all articles */
 
-  const articles = document.querySelectorAll(optArticleSelector + customSelector);
+  const articles = document.querySelectorAll(optArticleSelector);
 
   /* START LOOP: for every article: */
 
@@ -142,16 +189,57 @@ function generateTags(customSelector) {
 
       html = html + linkHTML;
 
+      /* [NEW] check if this link is NOT already in allTags */
+
+      if (!allTags.hasOwnProperty(tag)) {
+
+        /* [NEW] add tag to allTags object */
+
+        allTags[tag] = 1;
+      } else {
+        allTags[tag]++;
+      }
 
       /* END LOOP: for each tag */
     }
+
     /* insert HTML of all the links into the tags wrapper */
 
     titleTag.innerHTML = html;
 
     /* END LOOP: for every article: */
   }
+
+  /* [NEW] find list of tags in right column */
+
+  const tagList = document.querySelector(optTagsListSelector);
+
+  const tagsParams = calculateTagsParams(allTags);
+  console.log(tagsParams);
+
+  const allTagsData = { tags: [] };
+
+  /*[NEW] START LOOP: for each tag in allTags: */
+
+  for (let tag in allTags) {
+    /*[NEW] generate code of a link and add it to allTagsHTML */
+
+
+    // const tagLinkHTML = '<li><a class="'+ calculateTagClass(allTags[tag], tagsParams) +'" href="#tag-' + tag + '">' + tag + '</a></li>';
+
+    allTagsData.tags.push({
+      tag: tag,
+      count: allTags[tag],
+      className: calculateTagClass(allTags[tag], tagsParams)
+    });
+  }
+  /*[NEW] END LOOP: for each tag in allTags */
+
+  /*[NEW] add HTML for allTagsHTML to tagList: */
+
+  tagList.innerHTML = tagCloudLink(allTagsData);
 }
+
 generateTags();
 
 function tagClickHandler(event) {
