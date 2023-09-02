@@ -204,7 +204,7 @@ function tagClickHandler(event) {
   }
   /* execute function "generateTitleLinks" with article selector as argument */
 
-  generateTitleLinks('[data-tags~="' + tag + '"]');
+  generateTitleLinks('[data-tags*="' + tag + '"]');
 
 }
 
@@ -294,7 +294,7 @@ function authorClickHandler(event) {
 
   /* find all author links with "href" attribute equal to the "href" constant */
 
-  const authorLinks = document.querySelectorAll('href');
+  const authorLinks = document.querySelectorAll('a[href^="#author-"]');
 
   /* START LOOP: for each found author link */
 
@@ -308,7 +308,7 @@ function authorClickHandler(event) {
 
   /* execute function "generateTitleLinks" with article selector as argument */
 
-  generateTitleLinks('[data-author~="' + author + '"]');
+  generateTitleLinks('[data-author*="' + author + '"]');
 
 }
 
