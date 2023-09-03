@@ -132,10 +132,6 @@ function calculateTagClass(count, params) {
 }
 
 function tagCloudLink(data) {
-  const min = 1;
-  const max = Math.max(...data.tags.map(tag => tag.count));
-  const step = (max - min) / optCloudClassCount;
-
   const tagHTML = data.tags.map(tagData => {
     return `<li><a class="${tagData.className}" href="#tag-${tagData.tag}">${tagData.tag} (${tagData.count})</a></li>`;
   });
