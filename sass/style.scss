@@ -118,3 +118,39 @@ body {
     margin: 0 10px 0 0;
   }
 }
+
+.list.authors li {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+/*Tags*/
+.tag-size-1 {
+  font-size: 90%;
+  color: aquamarine;
+}
+
+.tag-size-2 {
+  font-size: 110%;
+  color: pink;
+}
+
+.tag-size-3 {
+  font-size: 130%;
+  color: orange;
+}
+
+.tag-size-4 {
+  font-size: 150%;
+  color: turquoise;
+}
+
+.tag-size-5 {
+  font-size: 250%;
+  color: magenta;
+}
+
+.list.tags li {
+  display: inline-block;
+  margin-right: 5px;
+}
