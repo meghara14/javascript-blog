@@ -1,5 +1,14 @@
 'use strict';
 
+const templates = {
+  articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML),
+  tagLink: Handlebars.compile(document.querySelector('#template-tag-link').innerHTML),
+  authorLink: Handlebars.compile(document.querySelector('#template-author-link').innerHTML),
+  tagCloudLink: Handlebars.compile(document.querySelector('#template-tag-cloud-link').innerHTML),
+  authorListLink: Handlebars.compile(document.querySelector('#template-all-authors-link').innerHTML),
+
+};
+
 function titleClickHandler(event) {
   event.preventDefault();
   const clickedElement = this;
@@ -53,10 +62,6 @@ const optArticleSelector = '.post',
   optTagsListSelector = '.tags.list',
   optAuthorsListSelector = '.authors.list';
 
-function authorLink(data) {
-  return `<a href="#author-${data.id}">${data.title}</a>`;
-}
-
 function generateTitleLinks(customSelector = '') {
 
   console.log('customSelector;');
@@ -85,7 +90,8 @@ function generateTitleLinks(customSelector = '') {
 
     /* create HTML of the link */
 
-    const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
+    const linkHTMLData = { id: articleId, title: articleTitle };
+    const linkHTML = templates.articleLink(linkHTMLData);
 
     /* insert link into titleList */
 
@@ -103,10 +109,6 @@ function generateTitleLinks(customSelector = '') {
 }
 
 generateTitleLinks();
-
-function tagArticleLink(data) {
-  return `<a href="#tag-${data.id}">${data.title}</a>`;
-}
 
 function calculateTagsParams(tags) {
   const params = { max: 0, min: 999999 };
@@ -134,14 +136,6 @@ function calculateTagClass(count, params) {
   const classNumber = Math.floor(percentage * (optCloudClassCount - 1) + 1);
 
   return optCloudClassPrefix + classNumber;
-}
-
-function tagCloudLink(data) {
-  const tagHTML = data.tags.map(tagData => {
-    return `<li><a class="${tagData.className}" href="#tag-${tagData.tag}">${tagData.tag}</a></li>`;
-  });
-
-  return tagHTML.join(' ');
 }
 
 function generateTags() {
@@ -183,7 +177,7 @@ function generateTags() {
       /* generate HTML of the link */
 
       const linkHTMLData = { id: tag, title: tag };
-      const linkHTML = tagArticleLink(linkHTMLData);
+      const linkHTML = templates.tagLink(linkHTMLData);
       console.log(linkHTML);
 
       /* add generated code to html variable */
@@ -218,7 +212,7 @@ function generateTags() {
   const tagsParams = calculateTagsParams(allTags);
   console.log(tagsParams);
 
-  const allTagsData = { tags: [] };
+  const allTagsData = { tags: []};
 
   /*[NEW] START LOOP: for each tag in allTags: */
 
@@ -238,7 +232,8 @@ function generateTags() {
   }
   /*[NEW] add HTML for allTagsHTML to tagList: */
 
-  tagList.innerHTML = tagCloudLink(allTagsData);
+  tagList.innerHTML = templates.tagCloudLink(allTagsData);
+  console.log(allTagsData);
 }
 
 generateTags();
@@ -345,7 +340,7 @@ function generateAuthors() {
     /* generate HTML of the link */
 
     const linkHTMLData = { id: articleAuthor, title: articleAuthor };
-    const linkHTML = authorLink(linkHTMLData);
+    const linkHTML = templates.authorLink(linkHTMLData);
     console.log(linkHTML);
 
     /* add generated code to html variable */
